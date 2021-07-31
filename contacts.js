@@ -1,5 +1,6 @@
 const fs = require("fs");
 const chalk = require("chalk");
+const validator = require("validator");
 
 // membuat folder data jika belum ada
 const dirPath = "./data";
@@ -21,7 +22,21 @@ const simpanContact = (nama, email, noHP) => {
   // cek duplikat
   const duplikat = contacts.find((contact) => contact.nama === nama);
   if (duplikat) {
-    console.log("contact sudah terdaftar!");
+    console.log(chalk.red.inverse.bold("contact sudah terdaftar!"));
+    return false;
+  }
+
+  // cek email
+  if (email) {
+    if (!validator.isEmail(email)) {
+      console.log(chalk.red.inverse.bold("email tidak valid!"));
+      return false;
+    }
+  }
+
+  // cek no HP
+  if (!validator.isMobilePhone(noHP, "id-ID")) {
+    console.log(chalk.red.inverse.bold("nomor HP tidak valid!"));
     return false;
   }
 
@@ -29,7 +44,7 @@ const simpanContact = (nama, email, noHP) => {
 
   fs.writeFileSync("data/contacts.json", JSON.stringify(contacts));
 
-  console.log("Terimakasih sudah memasukkan data.");
+  console.log(chalk.green.inverse.bold("Terimakasih sudah memasukkan data."));
 };
 
 module.exports = { simpanContact };
